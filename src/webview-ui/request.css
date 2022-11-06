@@ -1,0 +1,11 @@
+.actions {
+	padding-top: 0.5rem;
+	display: flex;
+	justify-content: space-around;
+}
+
+@media (min-width: 15rem) {
+	.actions {
+		justify-content: flex-end;
+	}
+}
