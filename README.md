@@ -1,4 +1,4 @@
-# Courier 
+# Courier REST Client
 
 Courier is a REST client implemented as a VS Code extension. It allows you to declare your REST library as code using Javascript, and then interact with your REST library using a UI in VS Code.
 
