@@ -4,6 +4,7 @@ import { RequestFunction } from "../definitions/types";
 import { getWebviewHtml } from "../definitions/helpers";
 import { RestClient } from "../RestClient";
 import { RequestStatus } from "./ResponseProvider";
+import { commands } from "../definitions/constants";
 
 class RequestProvider implements vscode.WebviewViewProvider {
   private view?: vscode.WebviewView;
@@ -14,7 +15,7 @@ class RequestProvider implements vscode.WebviewViewProvider {
     this.restClient = restClient;
     this.restClient.context.subscriptions.push(
       vscode.commands.registerCommand(
-        "courier.selectRequest",
+        commands.selectRequest,
         (requestFunction: RequestFunction) => this.update(requestFunction)
       )
     );

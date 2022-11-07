@@ -24,11 +24,11 @@
   "contributes": {
     "commands": [
       {
-        "command": "courier.selectRequest",
+        "command": "courier-rest-client.selectRequest",
         "title": "Select Request"
       },
       {
-        "command": "courier.pickEnvironment",
+        "command": "courier-rest-client.pickEnvironment",
         "title": "Pick Environment"
       }
     ],
