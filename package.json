@@ -8,7 +8,7 @@
   "license": "MIT",
   "displayName": "Courier REST Client",
   "description": "A REST client for VS Code",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.72.0"
   },
