@@ -1,6 +1,5 @@
 const vscode = acquireVsCodeApi();
 
-console.log("loading request.js");
 window.addEventListener("load", main);
 
 function main() {

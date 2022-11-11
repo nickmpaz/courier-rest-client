@@ -42,11 +42,11 @@ const getWebviewHtml = (
   ]);
 
   const scriptUris = scripts.map((script) =>
-    getWebviewUri(webview, extensionUri, ["src", "webview-ui", script])
+    getWebviewUri(webview, extensionUri, ["webview-ui", script])
   );
 
   const styleUris = styles.map((style) =>
-    getWebviewUri(webview, extensionUri, ["src", "webview-ui", style])
+    getWebviewUri(webview, extensionUri, ["webview-ui", style])
   );
 
   return /*html*/ `
