@@ -82,17 +82,16 @@ class EnvironmentProvider {
     const activeEnvironment = await this.restClient.context.workspaceState.get<
       Promise<EnvironmentFile>
     >(environmentStateKey);
+    const environmentFiles = await this.getEnvironmentFiles();
+
+    if (environmentFiles.length) {
+      this.selectedEnvironmentFile = environmentFiles[0];
+    }
 
     if (activeEnvironment) {
       this.selectedEnvironmentFile = activeEnvironment;
-      this.updateStatusBarText();
-      return;
     }
-    const environmentFiles = await this.getEnvironmentFiles();
-    if (environmentFiles.length) {
-      this.selectedEnvironmentFile = environmentFiles[0];
-      this.updateStatusBarText();
-    }
+    this.updateStatusBarText();
   }
 
   async loadEnvironment(): Promise<Record<string, unknown>> {
