@@ -1,11 +1,21 @@
-.actions {
-	padding-top: 0.5rem;
+.content-container {
 	display: flex;
-	justify-content: space-around;
+	flex-direction: column;
+}
+
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 0.5rem;
 }
 
 @media (min-width: 15rem) {
 	.actions {
 		justify-content: flex-end;
+		flex-direction: row;
+		align-items: flex-start;
 	}
 }

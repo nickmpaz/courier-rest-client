@@ -56,7 +56,7 @@ const getWebviewHtml = (
 
   return /*html*/ `
 <!DOCTYPE html>
-	<html lang="en">
+	<html lang="en" class="full-height">
 	<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -68,7 +68,7 @@ const getWebviewHtml = (
     )}
     ${styleUris.map((uri) => /*html*/ `<link rel="stylesheet" href="${uri}">`)}
 	</head>
-	<body>${content}</body>
+	<body class="full-height">${content}</body>
 </html>
 `;
 };

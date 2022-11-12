@@ -38,6 +38,7 @@ class RequestProvider implements vscode.WebviewViewProvider {
           this.sendRequest();
       }
     });
+    this.update()
   }
   async sendRequest() {
     if (this.requestFunction === undefined) {
@@ -54,23 +55,36 @@ class RequestProvider implements vscode.WebviewViewProvider {
     );
   }
 
-  update(requestFunction: RequestFunction) {
+  update(requestFunction?: RequestFunction) {
     this.requestFunction = requestFunction;
     if (!this.view) {
       return;
     }
-    this.view.webview.html = getWebviewHtml(
-      this.restClient.context,
+    this.view.webview.html = this.getHtml(
       this.view.webview,
+      this.requestFunction?.toString() ?? "Select a request",
+      !!this.requestFunction
+    );
+  }
+
+  getHtml(webview: vscode.Webview, content: string, isCode: boolean) {
+    const contentTag = isCode ? "pre" : "div";
+    return getWebviewHtml(
+      this.restClient.context,
+      webview,
       "Request",
       ["request.js"],
       ["request.css"],
-      /*html*/ `
-<div class="actions">
-  <vscode-button id="send-request" appearance="primary">Send request</vscode-button>
-</div>
-<pre>${this.requestFunction?.toString()}</pre>
-`
+      /* html */ `
+      <div class="content-container full-height">
+      <div class="actions">
+        <vscode-button id="send-request" appearance="primary">Send</vscode-button>
+      </div>
+      <div class="code-display-container full-height flex-grow">
+        <${contentTag} class="code-display full-height">${content}
+        </${contentTag}>
+      </div>
+      </div>`
     );
   }
 }

@@ -1,6 +1,5 @@
 html {
   box-sizing: border-box;
-  height: 100%;
 }
 *,
 *:before,
@@ -8,19 +7,29 @@ html {
   box-sizing: inherit;
 }
 
-body {
+.full-height {
   height: 100%;
+}
+
+.center-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-grow {
+	flex-grow: 1;
 }
 
 .code-display-container {
-  height: 100%;
-  padding: 0.75rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
 
-pre.code-display {
-  height: 100%;
-  margin: 0;
+.code-display {
   padding: 0.75rem;
+  margin: 0;
   overflow: auto;
   background-color: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-sideBarSectionHeader-border);
 }

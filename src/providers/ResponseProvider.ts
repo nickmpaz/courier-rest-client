@@ -36,32 +36,64 @@ class ResponseProvider implements vscode.WebviewViewProvider {
 
     switch (this.requestStatus) {
       case RequestStatus.Idle:
-        this.view.webview.html = "Send a request";
+        this.view.webview.html = this.getContentHtml(
+          this.view.webview,
+          "Send a request and the response will appear here.",
+          false,
+        );
         break;
       case RequestStatus.Loading:
-        this.view.webview.html = "Loading...";
+        this.view.webview.html = this.getLoadingHtml(this.view.webview);
         break;
       case RequestStatus.Error:
-        this.view.webview.html = "Error";
+        this.view.webview.html = this.view.webview.html = this.getContentHtml(
+          this.view.webview,
+          "Error",
+          false
+        );
         break;
       case RequestStatus.Success:
-        this.view.webview.html = getWebviewHtml(
-          this.restClient.context,
+        this.view.webview.html = this.getContentHtml(
           this.view.webview,
-          "Response",
-          [],
-          [],
-          /* html */ `
-          <div class="code-display-container">
-          <pre class="code-display">${this.response
-            ?.replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")}</pre>
-            
-            </div>
-            `
+          this.response,
+          true
         );
         break;
     }
+  }
+
+  getContentHtml(webview: vscode.Webview, content: string | undefined, isCode: boolean) {
+    const contentTag = isCode ? 'pre' : 'div'
+    return getWebviewHtml(
+      this.restClient.context,
+      webview,
+      "Response",
+      [],
+      [],
+      /* html */ `
+      <div class="code-display-container full-height">
+        <${contentTag} class="code-display full-height">${content
+        ?.replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")}
+        </${contentTag}>
+      </div>`
+    );
+  }
+
+  getLoadingHtml(webview: vscode.Webview) {
+    return getWebviewHtml(
+      this.restClient.context,
+      webview,
+      "Response",
+      [],
+      [],
+      /* html */ `
+      <div class="code-display-container full-height">
+        <div class="code-display full-height center-content">
+          <vscode-progress-ring></vscode-progress-ring>
+        </div>
+      </div>`
+    );
   }
 }
 
