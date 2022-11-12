@@ -41,6 +41,11 @@ const getWebviewHtml = (
     "toolkit.js",
   ]);
 
+  const globalStyleUri = getWebviewUri(webview, extensionUri, [
+    "webview-ui",
+    "global.css",
+  ]);
+
   const scriptUris = scripts.map((script) =>
     getWebviewUri(webview, extensionUri, ["webview-ui", script])
   );
@@ -57,6 +62,7 @@ const getWebviewHtml = (
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
     <script type="module" src="${toolkitUri}"></script>
+    <link rel="stylesheet" href="${globalStyleUri}">
     ${scriptUris.map(
       (uri) => /*html*/ `<script type="module" src="${uri}"></script>`
     )}
