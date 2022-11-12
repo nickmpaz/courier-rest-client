@@ -51,9 +51,14 @@ class ResponseProvider implements vscode.WebviewViewProvider {
           "Response",
           [],
           [],
-          `<pre>${this.response
+          /* html */ `
+          <div class="code-display-container">
+          <pre class="code-display">${this.response
             ?.replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")}</pre>`
+            .replace(/</g, "&lt;")}</pre>
+            
+            </div>
+            `
         );
         break;
     }
