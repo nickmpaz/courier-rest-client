@@ -1,0 +1,52 @@
+<html lang="en" class="full-height">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Response</title>
+    <script type="module" src="{{toolkitUri}}"></script>
+    {{#each scriptUris}}
+      <script type="module" src="{{this}}"></script>
+    {{/each}}
+    <link rel="stylesheet" href="{{globalStyleUri}}" />
+    {{#each styleUris}}
+      <link rel="stylesheet" href="{{this}}" />
+    {{/each}}
+  </head>
+  <body class="full-height">
+    <div class="flex-column full-height">
+      <div class="flex-row flex-justify-end flex-gap-1">
+        <vscode-button
+          id="reset-request"
+          appearance="secondary"
+        >Reset</vscode-button>
+        <vscode-button
+          id="send-request"
+          appearance="primary"
+        >Send</vscode-button>
+      </div>
+      <div class="flex-row flex-gap-1 pt-1">
+        <div
+          class="text-field {{requestMethod}}-request"
+        >{{requestMethod}}</div>
+        <div class="text-field flex-grow">{{requestUrl}}</div>
+      </div>
+      <div class="flex-grow">
+        <vscode-panels class="full-height" aria-label="Default">
+          <vscode-panel-tab id="tab-1">BODY</vscode-panel-tab>
+          <vscode-panel-tab id="tab-2">PARAMS</vscode-panel-tab>
+          <vscode-panel-view class="text-area-container full-height" id="view-1">
+            <pre
+              id="body-editor"
+              contenteditable="true"
+              class="text-area text-field"
+            >{{requestBody}}</pre>
+          </vscode-panel-view>
+          <vscode-panel-view
+            class="panel-view"
+            id="view-2"
+          >PARAMS</vscode-panel-view>
+        </vscode-panels>
+      </div>
+    </div>
+  </body>
+</html>

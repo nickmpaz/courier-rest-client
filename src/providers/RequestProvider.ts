@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import fetch from "node-fetch";
 import { Request, RequestFunction } from "../definitions/types";
-import { getWebviewHtml } from "../definitions/helpers";
+import { renderTemplate } from "../definitions/helpers";
 import { RestClient } from "../RestClient";
 import { RequestStatus } from "./ResponseProvider";
 import { commands } from "../definitions/constants";
@@ -41,12 +41,9 @@ class RequestProvider implements vscode.WebviewViewProvider {
         case "reset-request":
           this.update(this.requestFunction);
           break;
-        case "update-request-property":
+        case "update-body":
           if (this.requestPayload) {
-            this.requestPayload = {
-              ...this.requestPayload,
-              [message.key]: message.value,
-            };
+            this.requestPayload.body = message.value
           }
           break;
       }
@@ -54,15 +51,19 @@ class RequestProvider implements vscode.WebviewViewProvider {
     this.update();
   }
   async sendRequest() {
-    if (this.requestPayload === undefined) {
-      return;
+    try {
+      if (this.requestPayload === undefined) {
+        return;
+      }
+      this.restClient.responseProvider.update(undefined, RequestStatus.Loading);
+      const response = await fetch(this.requestPayload.url, this.requestPayload);
+      this.restClient.responseProvider.update(
+        await response.text(),
+        response.ok ? RequestStatus.Success : RequestStatus.Error,
+      );
+    } catch (err: any) {
+      this.restClient.responseProvider.update(err.message, RequestStatus.Error)
     }
-    this.restClient.responseProvider.update(undefined, RequestStatus.Loading);
-    const response = await fetch(this.requestPayload.url, this.requestPayload);
-    this.restClient.responseProvider.update(
-      await response.text(),
-      RequestStatus.Success
-    );
   }
 
   async update(requestFunction?: RequestFunction) {
@@ -72,40 +73,21 @@ class RequestProvider implements vscode.WebviewViewProvider {
     }
     const env = await this.restClient.environmentProvider.loadEnvironment();
     this.requestPayload = this.requestFunction(env);
+    const requestBody = this.requestPayload?.body?.toString() ?? '{}';
     this.view.webview.html = "";
-    this.view.webview.html = this.getHtml(
-      this.view.webview,
-      this.requestPayload ?? { url: "none" },
-      !!this.requestPayload
-    );
-  }
-
-  getHtml(webview: vscode.Webview, request: Request, isCode: boolean) {
-    return getWebviewHtml(
+    this.view.webview.html = renderTemplate(
       this.restClient.context,
-      webview,
-      "Request",
-      ["request.js"],
-      ["request.css"],
-      /* html */ `
-      <div class="content-container full-height">
-        <div class="actions">
-          <vscode-button id="reset-request" appearance="secondary">Reset</vscode-button>
-          <vscode-button id="send-request" appearance="primary">Send</vscode-button>
-        </div>
-        ${Object.entries(request)
-          .map(
-            ([key, value]) => /* html */ `
-              <vscode-text-field value="${value}" class="request-property-input" data-request-property="${key}">
-                ${key}
-              </vscode-text-field>`
-          )
-          .join(" ")}
-
-      </div>`
+      this.view.webview,
+      "request.hbs",
+      ['request.js'],
+      ['request.css'],
+      {
+        requestMethod: this.requestPayload.method ?? 'GET',
+        requestUrl: this.requestPayload.url,
+        requestBody: JSON.stringify(JSON.parse(requestBody), null, 2)
+      }
     );
   }
 }
 
 export { RequestProvider };
-  

@@ -15,16 +15,11 @@ function main() {
     });
   });
 
-  document.querySelectorAll(".request-property-input").forEach((el) => {
-    el.addEventListener("input", function (evt) {
-      const value = this.value;
-      const key = el.getAttribute("data-request-property");
-      console.log({ key, value });
-      vscode.postMessage({
-        command: "update-request-property",
-        key,
-        value,
-      });
+  const bodyEditor = document.getElementById("body-editor");
+  bodyEditor.addEventListener("input", function () {
+    vscode.postMessage({
+      command: "update-body",
+      value: bodyEditor.innerText,
     });
   });
 }

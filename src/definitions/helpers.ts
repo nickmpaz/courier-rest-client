@@ -1,4 +1,6 @@
+import Handlebars = require("handlebars");
 import * as vscode from "vscode";
+import fs = require("fs");
 import { Collection } from "./types";
 
 const importWithoutCache = (path: string) => {
@@ -24,13 +26,13 @@ const getWebviewUri = (
   pathList: string[]
 ) => webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, ...pathList));
 
-const getWebviewHtml = (
+const renderTemplate = (
   context: vscode.ExtensionContext,
   webview: vscode.Webview,
-  title: string,
-  scripts: string[],
-  styles: string[],
-  content: string
+  templateName: string,
+  scriptNames: string[],
+  styleNames: string[],
+  data: Record<string, unknown>
 ) => {
   const extensionUri = vscode.Uri.file(context.extensionPath);
   const toolkitUri = getWebviewUri(webview, extensionUri, [
@@ -40,37 +42,33 @@ const getWebviewHtml = (
     "dist",
     "toolkit.js",
   ]);
-
   const globalStyleUri = getWebviewUri(webview, extensionUri, [
     "webview-ui",
     "global.css",
   ]);
-
-  const scriptUris = scripts.map((script) =>
+  const scriptUris = scriptNames.map((script) =>
     getWebviewUri(webview, extensionUri, ["webview-ui", script])
   );
-
-  const styleUris = styles.map((style) =>
+  const styleUris = styleNames.map((style) =>
     getWebviewUri(webview, extensionUri, ["webview-ui", style])
   );
 
-  return /*html*/ `
-<!DOCTYPE html>
-	<html lang="en" class="full-height">
-	<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
-    <script type="module" src="${toolkitUri}"></script>
-    <link rel="stylesheet" href="${globalStyleUri}">
-    ${scriptUris.map(
-      (uri) => /*html*/ `<script type="module" src="${uri}"></script>`
-    )}
-    ${styleUris.map((uri) => /*html*/ `<link rel="stylesheet" href="${uri}">`)}
-	</head>
-	<body class="full-height">${content}</body>
-</html>
-`;
+  const templateUri = vscode.Uri.joinPath(
+    extensionUri,
+    "webview-ui",
+    "templates",
+    templateName
+  );
+  const source = fs.readFileSync(templateUri.fsPath).toString();
+  const template = Handlebars.compile(source);
+  const renderData = {
+    ...data,
+    toolkitUri,
+    globalStyleUri,
+    scriptUris,
+    styleUris,
+  };
+  return template(renderData);
 };
 
-export { getCollectionFromFile, getWebviewHtml };
+export { getCollectionFromFile, renderTemplate };

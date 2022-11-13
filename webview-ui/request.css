@@ -1,25 +1,13 @@
-.content-container {
-  display: flex;
-  flex-direction: column;
+.GET-request {
+  background-color: #2ECC71;
+  color: black;
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 0.5rem;
+.POST-request {
+  background-color: #c586c0;
+  color: black;
 }
 
-@media (min-width: 15rem) {
-  .actions {
-    justify-content: flex-end;
-    flex-direction: row;
-    align-items: flex-start;
-  }
-}
-
-.request-property-input {
-  padding-bottom: 0.5rem;
+vscode-panel-tab {
+  font-size: 11px;
 }

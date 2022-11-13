@@ -1,0 +1,28 @@
+<html lang="en" class="full-height">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Response</title>
+    <script type="module" src="{{toolkitUri}}"></script>
+    {{#each scriptUris}}
+      <script type="module" src="{{this}}"></script>
+    {{/each}}
+    <link rel="stylesheet" href="{{globalStyleUri}}" />
+    {{#each styleUris}}
+      <link rel="stylesheet" href="{{this}}" />
+    {{/each}}
+  </head>
+  <body class="full-height">
+    <div class="flex-column full-height">
+      <div class="pt-1"><span class="dot {{requestStatus}}"></span>
+        {{requestStatus}}</div>
+      <div class="text-area-container flex-grow">
+        {{#if isCode}}
+          <pre class="text-area text-field">{{message}}</pre>
+        {{else}}
+          <div class="text-area text-field">{{message}}</div>
+        {{/if}}
+      </div>
+    </div>
+  </body>
+</html>

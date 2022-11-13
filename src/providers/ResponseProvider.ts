@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { getWebviewHtml } from "../definitions/helpers";
+import { renderTemplate } from "../definitions/helpers";
 import { RequestStatus } from "../definitions/types";
 import { RestClient } from "../RestClient";
 
@@ -34,65 +34,31 @@ class ResponseProvider implements vscode.WebviewViewProvider {
       return;
     }
 
+    const templateData: Record<string, unknown> = {
+      requestStatus,
+    }
     switch (this.requestStatus) {
       case RequestStatus.Idle:
-        this.view.webview.html = this.getContentHtml(
-          this.view.webview,
-          "Send a request and the response will appear here.",
-          false,
-        );
-        break;
-      case RequestStatus.Loading:
-        this.view.webview.html = this.getLoadingHtml(this.view.webview);
+        templateData.isCode = false
+        templateData.message = 'Send a request and the response will appear here.'
         break;
       case RequestStatus.Error:
-        this.view.webview.html = this.view.webview.html = this.getContentHtml(
-          this.view.webview,
-          "Error",
-          false
-        );
-        break;
       case RequestStatus.Success:
-        this.view.webview.html = this.getContentHtml(
-          this.view.webview,
-          this.response,
-          true
-        );
+        templateData.isCode = true
+        templateData.message = this.response
+        break;
+      case RequestStatus.Loading:
+        templateData.isCode = false
+        templateData.message = ''
         break;
     }
-  }
-
-  getContentHtml(webview: vscode.Webview, content: string | undefined, isCode: boolean) {
-    const contentTag = isCode ? 'pre' : 'div'
-    return getWebviewHtml(
+    this.view.webview.html = renderTemplate(
       this.restClient.context,
-      webview,
-      "Response",
+      this.view.webview,
+      "response.hbs",
       [],
-      [],
-      /* html */ `
-      <div class="code-display-container full-height">
-        <${contentTag} class="code-display full-height">${content
-        ?.replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")}
-        </${contentTag}>
-      </div>`
-    );
-  }
-
-  getLoadingHtml(webview: vscode.Webview) {
-    return getWebviewHtml(
-      this.restClient.context,
-      webview,
-      "Response",
-      [],
-      [],
-      /* html */ `
-      <div class="code-display-container full-height">
-        <div class="code-display full-height center-content">
-          <vscode-progress-ring></vscode-progress-ring>
-        </div>
-      </div>`
+      ['response.css'],
+      templateData
     );
   }
 }

@@ -27,10 +27,10 @@ interface EnvironmentFile {
 }
 
 enum RequestStatus {
-  Idle,
-  Loading,
-  Success,
-  Error,
+  Idle = 'idle',
+  Loading = 'loading',
+  Success = 'success',
+  Error = 'error',
 }
 
 export {
