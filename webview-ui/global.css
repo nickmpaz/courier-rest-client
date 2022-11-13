@@ -44,6 +44,10 @@ html {
   padding-bottom: 0.5rem;
 }
 
+.uppercase {
+  text-transform: uppercase;
+}
+
 /* utils */
 
 .text-field {

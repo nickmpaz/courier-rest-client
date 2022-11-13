@@ -1,9 +1,9 @@
-.GET-request {
+.get-request {
   background-color: #2ECC71;
   color: black;
 }
 
-.POST-request {
+.post-request {
   background-color: #c586c0;
   color: black;
 }
