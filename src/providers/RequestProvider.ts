@@ -43,7 +43,7 @@ class RequestProvider implements vscode.WebviewViewProvider {
           break;
         case "update-body":
           if (this.requestPayload) {
-            this.requestPayload.body = message.value
+            this.requestPayload.body = message.value;
           }
           break;
       }
@@ -56,13 +56,16 @@ class RequestProvider implements vscode.WebviewViewProvider {
         return;
       }
       this.restClient.responseProvider.update(undefined, RequestStatus.Loading);
-      const response = await fetch(this.requestPayload.url, this.requestPayload);
+      const response = await fetch(
+        this.requestPayload.url,
+        this.requestPayload
+      );
       this.restClient.responseProvider.update(
         await response.text(),
-        response.ok ? RequestStatus.Success : RequestStatus.Error,
+        response.ok ? RequestStatus.Success : RequestStatus.Error
       );
     } catch (err: any) {
-      this.restClient.responseProvider.update(err.message, RequestStatus.Error)
+      this.restClient.responseProvider.update(err.message, RequestStatus.Error);
     }
   }
 
@@ -73,18 +76,22 @@ class RequestProvider implements vscode.WebviewViewProvider {
     }
     const env = await this.restClient.environmentProvider.loadEnvironment();
     this.requestPayload = this.requestFunction(env);
-    const requestBody = this.requestPayload?.body?.toString() ?? '{}';
+    const requestBody = JSON.stringify(
+      JSON.parse(this.requestPayload?.body?.toString() ?? "{}"),
+      null,
+      2
+    );
     this.view.webview.html = "";
     this.view.webview.html = renderTemplate(
       this.restClient.context,
       this.view.webview,
       "request.hbs",
-      ['request.js'],
-      ['request.css'],
+      ["request.js"],
+      ["request.css"],
       {
-        requestMethod: this.requestPayload.method?.toLowerCase() ?? 'get',
+        requestMethod: this.requestPayload.method?.toLowerCase() ?? "get",
         requestUrl: this.requestPayload.url,
-        requestBody: JSON.stringify(JSON.parse(requestBody), null, 2)
+        requestBody,
       }
     );
   }
