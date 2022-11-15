@@ -14,7 +14,9 @@
   </head>
   <body class="full-height pt-1">
     <div class="flex-column full-height">
-      <div class="flex-row flex-justify-end flex-gap-1">
+      <div class="flex-row flex-justify-end flex-align-center flex-gap-1">
+        <div class="flex-grow"><span class="dot {{requestStatus}}"></span>
+          {{requestStatus}}</div>
         <vscode-button
           id="reset-request"
           appearance="secondary"
@@ -32,9 +34,20 @@
       </div>
       <div class="flex-grow">
         <vscode-panels class="full-height" aria-label="Default">
-          <vscode-panel-tab id="tab-1">BODY</vscode-panel-tab>
-          <vscode-panel-tab id="tab-2">PARAMS</vscode-panel-tab>
-          <vscode-panel-view class="text-area-container full-height" id="view-1">
+          <vscode-panel-tab id="tab-1">RESPONSE</vscode-panel-tab>
+          <vscode-panel-tab id="tab-2">BODY</vscode-panel-tab>
+          <vscode-panel-tab id="tab-3">PARAMS</vscode-panel-tab>
+          <vscode-panel-tab id="tab-4">HEADERS</vscode-panel-tab>
+          <vscode-panel-view
+            class="text-area-container full-height"
+            id="view-1"
+          >
+            <pre id="response-display" class="text-area text-field">the response</pre>
+          </vscode-panel-view>
+          <vscode-panel-view
+            class="text-area-container full-height"
+            id="view-2"
+          >
             <pre
               id="body-editor"
               contenteditable="true"
@@ -43,8 +56,12 @@
           </vscode-panel-view>
           <vscode-panel-view
             class="panel-view"
-            id="view-2"
+            id="view-3"
           >PARAMS</vscode-panel-view>
+          <vscode-panel-view
+            class="panel-view"
+            id="view-3"
+          >HEADERS</vscode-panel-view>
         </vscode-panels>
       </div>
     </div>

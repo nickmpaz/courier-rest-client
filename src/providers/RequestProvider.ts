@@ -92,6 +92,7 @@ class RequestProvider implements vscode.WebviewViewProvider {
         requestMethod: this.requestPayload.method?.toLowerCase() ?? "get",
         requestUrl: this.requestPayload.url,
         requestBody,
+        requestStatus: 'success',
       }
     );
   }

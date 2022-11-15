@@ -31,6 +31,10 @@ html {
   justify-content: flex-end;
 }
 
+.flex-align-center {
+  align-items: center;
+}
+
 .flex-gap-1 {
   gap: 0.5rem;
 }
