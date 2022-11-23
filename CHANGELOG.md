@@ -1,5 +1,13 @@
 # Change Log
 
+### 0.0.6
+
+- Add more stuff
+
+### 0.0.5
+
+- Update UI
+
 ### 0.0.4
 
 - Update UI
