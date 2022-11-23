@@ -1,0 +1,41 @@
+{{#object-editor-each obj name}}
+  <div
+    class="flex-row flex-gap-1 pb-1"
+    data-object-editor-uuid="{{uuid}}"
+    data-object-editor-field-type="container"
+  >
+    <div
+      class="text-field object-editor-key-field"
+      data-object-editor-name="{{name}}"
+      data-object-editor-field-type="key"
+      data-object-editor-uuid="{{uuid}}"
+      contenteditable="true"
+    >{{key}}</div>
+    <div
+      class="text-field object-editor-value-field"
+      data-object-editor-name="{{name}}"
+      data-object-editor-field-type="value"
+      data-object-editor-uuid="{{uuid}}"
+      contenteditable="true"
+    >{{value}}</div>
+    <vscode-button
+      appearance="icon"
+      aria-label="delete"
+      data-object-editor-name="{{name}}"
+      data-object-editor-field-type="delete"
+      data-object-editor-uuid="{{uuid}}"
+    >
+      <span class="codicon codicon-close"></span>
+    </vscode-button>
+  </div>
+{{/object-editor-each}}
+<span>
+  <vscode-button
+    appearance="icon"
+    aria-label="add"
+    data-object-editor-name="{{name}}"
+    data-object-editor-field-type="add"
+  >
+    <span class="codicon codicon-plus"></span>
+  </vscode-button>
+</span>

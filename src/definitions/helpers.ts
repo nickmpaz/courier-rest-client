@@ -2,6 +2,7 @@ import Handlebars = require("handlebars");
 import * as vscode from "vscode";
 import fs = require("fs");
 import { Collection } from "./types";
+import { v4 as uuidv4 } from "uuid";
 
 const importWithoutCache = (path: string) => {
   delete require.cache[require.resolve(path)];
@@ -26,14 +27,14 @@ const getWebviewUri = (
   pathList: string[]
 ) => webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, ...pathList));
 
-const renderTemplate = (
+const renderHTMLTemplate = (
   context: vscode.ExtensionContext,
   webview: vscode.Webview,
   templateName: string,
   scriptNames: string[],
   styleNames: string[],
   data: Record<string, unknown>
-) => {
+): string => {
   const extensionUri = vscode.Uri.file(context.extensionPath);
   const toolkitUri = getWebviewUri(webview, extensionUri, [
     "node_modules",
@@ -41,6 +42,12 @@ const renderTemplate = (
     "webview-ui-toolkit",
     "dist",
     "toolkit.js",
+  ]);
+  const codiconsUri = getWebviewUri(webview, extensionUri, [
+    "node_modules",
+    "@vscode/codicons",
+    "dist",
+    "codicon.css",
   ]);
   const globalStyleUri = getWebviewUri(webview, extensionUri, [
     "webview-ui",
@@ -60,6 +67,20 @@ const renderTemplate = (
     templateName
   );
   const source = fs.readFileSync(templateUri.fsPath).toString();
+
+  Handlebars.registerHelper("object-editor-each", function (context: any, name: string, options) {
+    let entries: [string, unknown][];
+    try {
+      entries = Object.entries(context)
+    } catch (err) {
+      entries = []
+    }
+    return entries.reduce((accum, [key, value]) => {
+      const uuid = uuidv4()
+      return accum + options.fn({ key, value, uuid, name })
+    }, "")
+  });
+
   const template = Handlebars.compile(source);
   const renderData = {
     ...data,
@@ -67,8 +88,10 @@ const renderTemplate = (
     globalStyleUri,
     scriptUris,
     styleUris,
+    codiconsUri,
   };
   return template(renderData);
 };
 
-export { getCollectionFromFile, renderTemplate };
+
+export { getCollectionFromFile, renderHTMLTemplate };

@@ -1,5 +1,5 @@
 .get-request {
-  background-color: #2ECC71;
+  background-color: #2ecc71;
   color: black;
 }
 
@@ -35,4 +35,18 @@ vscode-panel-tab {
 
 .idle {
   background-color: transparent;
+}
+
+.object-editor-key-field {
+  width: 33%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.object-editor-value-field {
+  flex-grow: 1;
+}
+
+.request-status {
+  text-transform: capitalize;
 }

@@ -7,6 +7,7 @@
     {{#each scriptUris}}
       <script type="module" src="{{this}}"></script>
     {{/each}}
+    <link rel="stylesheet" href="{{codiconsUri}}" />
     <link rel="stylesheet" href="{{globalStyleUri}}" />
     {{#each styleUris}}
       <link rel="stylesheet" href="{{this}}" />
@@ -15,25 +16,26 @@
   <body class="full-height pt-1">
     <div class="flex-column full-height">
       <div class="flex-row flex-justify-end flex-align-center flex-gap-1">
-        <div class="flex-grow"><span class="dot {{requestStatus}}"></span>
-          {{requestStatus}}</div>
+        <div id="request-status" class="flex-grow"></div>
         <vscode-button
           id="reset-request"
           appearance="secondary"
         >Reset</vscode-button>
+        <vscode-button
+          id="abort-request"
+          appearance="secondary"
+        >Abort</vscode-button>
         <vscode-button
           id="send-request"
           appearance="primary"
         >Send</vscode-button>
       </div>
       <div class="flex-row flex-gap-1 pt-1">
-        <div
-          class="text-field {{requestMethod}}-request uppercase"
-        >{{requestMethod}}</div>
-        <div class="text-field flex-grow">{{requestUrl}}</div>
+        <div id="request-method"></div>
+        <div id="request-url" class="text-field flex-grow"></div>
       </div>
       <div class="flex-grow">
-        <vscode-panels class="full-height" aria-label="Default">
+        <vscode-panels id="panels" class="full-height" aria-label="Default">
           <vscode-panel-tab id="tab-1">RESPONSE</vscode-panel-tab>
           <vscode-panel-tab id="tab-2">BODY</vscode-panel-tab>
           <vscode-panel-tab id="tab-3">PARAMS</vscode-panel-tab>
@@ -42,26 +44,26 @@
             class="text-area-container full-height"
             id="view-1"
           >
-            <pre id="response-display" class="text-area text-field">the response</pre>
+            <pre id="request-response" class="text-area text-field"></pre>
           </vscode-panel-view>
           <vscode-panel-view
             class="text-area-container full-height"
             id="view-2"
           >
             <pre
-              id="body-editor"
+              id="request-body"
               contenteditable="true"
               class="text-area text-field"
-            >{{requestBody}}</pre>
+            ></pre>
           </vscode-panel-view>
-          <vscode-panel-view
-            class="panel-view"
-            id="view-3"
-          >PARAMS</vscode-panel-view>
-          <vscode-panel-view
-            class="panel-view"
-            id="view-3"
-          >HEADERS</vscode-panel-view>
+          <vscode-panel-view class="panel-view" id="view-3">
+            <div class="flex-column full-width" id="request-params">
+            </div>
+          </vscode-panel-view>
+          <vscode-panel-view class="panel-view" id="view-3">
+            <div class="flex-column full-width" id="request-headers">
+            </div>
+          </vscode-panel-view>
         </vscode-panels>
       </div>
     </div>
