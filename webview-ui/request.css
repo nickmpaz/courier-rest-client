@@ -37,16 +37,21 @@ vscode-panel-tab {
   background-color: transparent;
 }
 
-.object-editor-key-field {
+.object-editor-key {
   width: 33%;
   overflow: hidden;
   flex-shrink: 0;
 }
 
-.object-editor-value-field {
+.object-editor-value {
   flex-grow: 1;
 }
 
 .request-status {
   text-transform: capitalize;
+}
+
+
+.object-editor-add {
+  display: inline-block;
 }

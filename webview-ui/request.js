@@ -17,6 +17,12 @@ window.addEventListener("message", (event) => {
   }
 });
 
+function update(data) {
+  Object.entries(data).forEach(([key, value]) => {
+    document.getElementById(key)[value.type] = value.content;
+  });
+}
+
 function main() {
   document.getElementById("send-request").addEventListener("click", () => {
     vscode.postMessage({
@@ -43,74 +49,56 @@ function main() {
       value: bodyEditor.innerText,
     });
   });
+
+  const objectEditors = document.querySelectorAll(".object-editor");
+
+  objectEditors.forEach((objectEditor) => {
+    objectEditor.addEventListener("click", function (evt) {
+      if (evt.target.className.includes("delete")) {
+        const objectEditorField = evt.target.closest(".object-editor-field");
+        objectEditorField.remove();
+        sendObjectEditorPayload(objectEditor);
+      }
+      if (evt.target.className.includes("add")) {
+        const templateNode = objectEditor.querySelector(
+          ".object-editor-field-template"
+        );
+        const clone = templateNode.cloneNode(true);
+        clone.classList.remove("object-editor-field-template");
+        clone.classList.add("object-editor-field");
+        clone.style.removeProperty("display");
+        const objectEditorFieldsContainer = objectEditor.querySelector(
+          ".object-editor-fields"
+        );
+        objectEditorFieldsContainer.appendChild(clone);
+      }
+    });
+
+    objectEditor.addEventListener("input", function () {
+      sendObjectEditorPayload(objectEditor);
+    });
+  });
 }
 
-function update(data) {
-  Object.entries(data).forEach(([key, value]) => {
-    document.getElementById(key)[value.type] = value.content;
+function sendObjectEditorPayload(objectEditor) {
+  const objectEditorFieldsContainer = objectEditor.querySelector(
+    ".object-editor-fields"
+  );
+  const objectEditorFields = objectEditorFieldsContainer.querySelectorAll(
+    ".object-editor-field"
+  );
+  const object = {};
+  objectEditorFields.forEach((objectEditorField) => {
+    const keyEl = objectEditorField.querySelector(".object-editor-key");
+    const valueEl = objectEditorField.querySelector(".object-editor-value");
+    object[keyEl.innerText] = valueEl.innerText;
   });
-  initObjectEditor("params");
-  initObjectEditor("headers");
+  vscode.postMessage({
+    command: `object-editor-update-${objectEditor.id}`,
+    value: object,
+  });
 }
 
 function focusResponseTab() {
   document.getElementById("panels").setAttribute("activeid", "tab-1");
-}
-
-function initObjectEditor(name) {
-  const keyFields = document.querySelectorAll(
-    `[data-object-editor-name="${name}"][data-object-editor-field-type="key"]`
-  );
-  const valueFields = document.querySelectorAll(
-    `[data-object-editor-name="${name}"][data-object-editor-field-type="value"]`
-  );
-  const editorFields = [...keyFields, ...valueFields];
-  editorFields.forEach((editorField) =>
-    editorField.addEventListener("input", function () {
-      sendObjectEditorPayload(name);
-    })
-  );
-
-  const deleteButtons = document.querySelectorAll(
-    `[data-object-editor-name="${name}"][data-object-editor-field-type="delete"]`
-  );
-  deleteButtons.forEach((button) => {
-    const uuid = button.getAttribute("data-object-editor-uuid");
-    button.addEventListener("click", function () {
-      document
-        .querySelector(
-          `[data-object-editor-field-type="container"][data-object-editor-uuid="${uuid}"]`
-        )
-        .remove();
-    });
-  });
-  const addButton = document.querySelector(
-    `[data-object-editor-field-type="add"][data-object-editor-name="${name}"]`
-  );
-  addButton.addEventListener("click", function () {
-    vscode.postMessage({
-      command: `object-editor-add`,
-      value: name,
-    });
-  });
-}
-
-function sendObjectEditorPayload(name) {
-  const keyFields = document.querySelectorAll(
-    `[data-object-editor-name="${name}"][data-object-editor-field-type="key"]`
-  );
-  const payload = {};
-  keyFields.forEach((keyField) => {
-    const keyFieldUuid = keyField.getAttribute("data-object-editor-uuid");
-    const valueField = document.querySelector(
-      `[data-object-editor-field-type="value"][data-object-editor-uuid="${keyFieldUuid}"]`
-    );
-    const key = keyField.innerText;
-    const value = valueField.innerText;
-    payload[key] = value;
-  });
-  vscode.postMessage({
-    command: `object-editor-update-${name}`,
-    value: payload,
-  });
 }

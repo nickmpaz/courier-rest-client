@@ -68,18 +68,21 @@ const renderHTMLTemplate = (
   );
   const source = fs.readFileSync(templateUri.fsPath).toString();
 
-  Handlebars.registerHelper("object-editor-each", function (context: any, name: string, options) {
-    let entries: [string, unknown][];
-    try {
-      entries = Object.entries(context)
-    } catch (err) {
-      entries = []
+  Handlebars.registerHelper(
+    "object-editor-each",
+    function (context: any, name: string, options) {
+      let entries: [string, unknown][];
+      try {
+        entries = Object.entries(context);
+      } catch (err) {
+        entries = [];
+      }
+      return entries.reduce((accum, [key, value]) => {
+        const uuid = uuidv4();
+        return accum + options.fn({ key, value, uuid, name });
+      }, "");
     }
-    return entries.reduce((accum, [key, value]) => {
-      const uuid = uuidv4()
-      return accum + options.fn({ key, value, uuid, name })
-    }, "")
-  });
+  );
 
   const template = Handlebars.compile(source);
   const renderData = {
@@ -93,5 +96,26 @@ const renderHTMLTemplate = (
   return template(renderData);
 };
 
+const getUrlWithoutSearchParams = (url?: string) => url?.split("?")[0] ?? "";
 
-export { getCollectionFromFile, renderHTMLTemplate };
+const getParams = (url: string | undefined): Record<string, string> => {
+  if (url === undefined) {
+    return {};
+  }
+  const search = new URL(url).search;
+  const params = new URLSearchParams(search);
+  return Object.fromEntries(params);
+};
+
+const buildUrl = (base: string, searchParams: Record<string, string>) => {
+  const params = new URLSearchParams(searchParams);
+  return `${base}?${params}`;
+};
+
+export {
+  getCollectionFromFile,
+  renderHTMLTemplate,
+  getUrlWithoutSearchParams,
+  getParams,
+  buildUrl,
+};

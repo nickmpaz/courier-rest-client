@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import fetch from "node-fetch";
 import { AbortController } from "node-abort-controller";
 import { Request, RequestFunction, RequestStatus } from "../definitions/types";
-import { renderHTMLTemplate } from "../definitions/helpers";
+import { getUrlWithoutSearchParams, renderHTMLTemplate, getParams, buildUrl } from "../definitions/helpers";
 import { RestClient } from "../RestClient";
 import { commands } from "../definitions/constants";
 import { Timer } from "../Timer";
@@ -73,24 +73,17 @@ class RequestProvider implements vscode.WebviewViewProvider {
             this.requestPayload.body = message.value;
           }
           break;
-        case "object-editor-update-params":
+        case "object-editor-update-request-params":
           const params = message.value;
+          if (this.requestPayload) {
+            this.requestPayload.url = buildUrl(getUrlWithoutSearchParams(this.requestPayload.url), params);
+          }
           break;
-        case "object-editor-update-headers":
+        case "object-editor-update-request-headers":
           const headers = message.value;
           if (this.requestPayload) {
             this.requestPayload.headers = headers;
           }
-          break;
-        case "object-editor-add":
-          const name = message.value;
-          if (name === "headers" && this.requestPayload) {
-            this.requestPayload.headers = { ...this.requestPayload.headers, '': '' }
-          }
-          if (name === 'params' && this.requestPayload) {
-            this.requestPayload.url += '&='
-          }
-          this.update();
           break;
       }
     });
@@ -164,7 +157,7 @@ class RequestProvider implements vscode.WebviewViewProvider {
       },
       "request-url": {
         type: "innerText",
-        content: this.requestPayload?.url.split('?')[0] ?? "",
+        content: getUrlWithoutSearchParams(this.requestPayload?.url)
       },
       "request-body": {
         type: "innerText",
@@ -217,13 +210,6 @@ class RequestProvider implements vscode.WebviewViewProvider {
   }
 }
 
-const getParams = (url: string | undefined): Record<string, string> => {
-  if (url === undefined) {
-    return {};
-  }
-  const search = new URL(url).search;
-  const params = new URLSearchParams(search);
-  return Object.fromEntries(params);
-};
+
 
 export { RequestProvider };
